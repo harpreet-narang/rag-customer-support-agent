@@ -47,9 +47,11 @@ create table if not exists public.leads (
   updated_at timestamptz not null default now()
 );
 
-create unique index if not exists leads_session_email_unique
-on public.leads(session_id, email)
-where email is not null;
+alter table public.leads
+  drop constraint if exists leads_session_email_unique;
+
+alter table public.leads
+  add constraint leads_session_email_unique unique (session_id, email);
 
 -- Conversation observability
 create table if not exists public.conversation_logs (
