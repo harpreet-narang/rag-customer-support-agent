@@ -204,14 +204,13 @@ For a real deployment:
 - monitoring and alerting
 - human review dashboard
 
-## Acknowledgements
+## Project background
 
-This project was designed as an original portfolio implementation informed by common n8n RAG patterns and by the public project **alihassanml/N8N-Rag-Agents**.
+This repository is a **public, sanitized portfolio implementation** based on patterns I have worked with in private AI assistant and customer-support automation projects.
 
-Reference:
-https://github.com/alihassanml/N8N-Rag-Agents
+The public version uses fictional business data and a clean standalone architecture so the workflow can be inspected without exposing production code, customer information, credentials, internal prompts, or proprietary project details.
 
-No private production code or customer data is included in this repository.
+The workflow, prompts, database structure, and documentation in this repository were created specifically for this public portfolio implementation.
 
 ## License
 
