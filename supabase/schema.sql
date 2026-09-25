@@ -60,8 +60,14 @@ create table if not exists public.conversation_logs (
   user_message text not null,
   assistant_reply text not null,
   needs_human boolean not null default false,
+  handoff_type text
+    check (handoff_type is null or handoff_type in ('user_requested','ai_fallback')),
   created_at timestamptz not null default now()
 );
+
+alter table public.conversation_logs
+  add column if not exists handoff_type text
+  check (handoff_type is null or handoff_type in ('user_requested','ai_fallback'));
 
 -- Human follow-up queue
 create table if not exists public.escalations (
@@ -69,14 +75,36 @@ create table if not exists public.escalations (
   session_id text not null,
   user_message text not null,
   reason text,
+  handoff_type text not null default 'ai_fallback'
+    check (handoff_type in ('user_requested','ai_fallback')),
+  summary text,
+  assigned_to text,
   status text not null default 'open'
     check (status in ('open','in_progress','resolved')),
   created_at timestamptz not null default now(),
+  accepted_at timestamptz,
   resolved_at timestamptz
 );
+
+-- Safe upgrade path for repositories that already created the original table.
+alter table public.escalations
+  add column if not exists handoff_type text not null default 'ai_fallback'
+  check (handoff_type in ('user_requested','ai_fallback'));
+
+alter table public.escalations
+  add column if not exists summary text;
+
+alter table public.escalations
+  add column if not exists assigned_to text;
+
+alter table public.escalations
+  add column if not exists accepted_at timestamptz;
 
 create index if not exists idx_conversation_logs_session_id
 on public.conversation_logs(session_id);
 
 create index if not exists idx_escalations_status
 on public.escalations(status);
+
+create index if not exists idx_escalations_handoff_type
+on public.escalations(handoff_type);
